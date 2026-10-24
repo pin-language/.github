@@ -49,12 +49,12 @@ Same algorithm in every language, same output checked. Apple M2, best of 3 runs 
 
 | | Pin | Rust | Go | PHP + JIT | PHP | Python |
 |---|---|---|---|---|---|---|
-| sieve — primes below 20M | **0.048** | 0.074 | 0.046 | 0.642 | 1.385 | 4.420 |
-| collatz — longest chain below 1M | **0.163** | 0.133 | 0.174 | 0.715 | 3.223 | 6.370 |
-| pi — 100M terms | **0.098** | 0.096 | 0.093 | 0.943 | 2.260 | 13.265 |
-| list build + sum | **0.116** | 0.141 | 0.178 | 0.459 | 1.210 | 5.280 |
+| sieve — primes below 20M | **0.042** | 0.043 | 0.041 | 0.652 | 1.337 | 4.283 |
+| collatz — longest chain below 1M | **0.165** | 0.131 | 0.175 | 0.714 | 3.204 | 6.302 |
+| pi — 100M terms | **0.090** | 0.090 | 0.091 | 0.930 | 2.235 | 13.239 |
+| list build + sum | **0.114** | 0.131 | 0.183 | 0.440 | 1.192 | 4.754 |
 
-Rust- and Go-level speed, 4–13× faster than PHP with JIT. Small CPU loops, not applications; on macOS
+Rust- and Go-level speed, about 4–15× faster than PHP with JIT. Small CPU loops, not applications; on macOS
 differences under ~20% are noise. Method, memory and HTTP numbers: [benchmarks](https://github.com/pin-language/benchmarks).
 
 ## Try it with your agent
