@@ -4,7 +4,7 @@
 
 **A PHP-like language for AI coding agents — compiled to native code, with no garbage collector.**
 
-[Language](https://github.com/pin-language/pin) · [Docs](https://github.com/pin-language/docs) · [AI guide](https://github.com/pin-language/docs/blob/HEAD/ai-guide.md) · [Benchmarks](https://github.com/pin-language/benchmarks)
+[Language](https://github.com/pin-language/pin) · [Learn](https://github.com/pin-language/docs/blob/HEAD/learn/README.md) · [Docs](https://github.com/pin-language/docs) · [AI guide](https://github.com/pin-language/docs/blob/HEAD/ai-guide.md) · [Benchmarks](https://github.com/pin-language/benchmarks)
 
 </div>
 
