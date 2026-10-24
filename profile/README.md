@@ -65,9 +65,12 @@ problem, so the agent can loop on its own.
 
 ## Status
 
-**v0.1 preview.** Functions, `int float bool string`, `list<T>`, ordered `map<K,V>`, ownership checking,
-bounds-checked lists, a JSON HTTP server. Not yet: classes, `null`, `try`/`catch`, closures, modules,
-`json_decode`, request headers. Not for production; do not expose the server to the internet yet.
+**Preview (0.4).** Functions, `int float bool string`, `list<T>` (including strings), ordered `map<K,V>`,
+ownership checking, bounds-checked lists, a multi-threaded JSON HTTP server with query, form and JSON-body
+helpers, SQLite with injection-proof SQL, modules (`import` / `export`) and Git packages pinned in
+`pin.lock`. Not yet: classes, `null`, `try`/`catch`, closures, nested containers, a full `json_decode`,
+request headers, PostgreSQL, TLS and timeouts in the server. Not for production; do not expose the server to
+the internet yet.
 
 [Open an issue](https://github.com/pin-language/pin/issues) — we especially want code your agent expected to
 work but could not compile.
