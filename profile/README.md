@@ -8,6 +8,19 @@
 
 </div>
 
+## Install
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/pin-language/pin/HEAD/install.sh | sh
+```
+
+macOS or Linux, no sudo. Needs Python 3.10+ and clang (macOS: `xcode-select --install`; Ubuntu:
+`sudo apt install clang`) — the installer checks both and tells you what is missing. Then:
+
+```bash
+printf '%s\n' 'echo "Hello from Pin\n";' > hello.pn && pin hello.pn
+```
+
 Most code is now written by AI agents, and they already know PHP. Pin keeps that syntax but moves the
 mistakes from production to compile time: every variable has one type, memory is managed by compile-time
 ownership (like Rust, simplified), every path through a function is checked, and every error says how to fix
@@ -46,14 +59,9 @@ differences under ~20% are noise. Method, memory and HTTP numbers: [benchmarks](
 
 ## Try it with your agent
 
-```bash
-git clone https://github.com/pin-language/pin.git && cd pin && ./pin examples/hello.pn
-```
-
-Then tell your agent: *"Read https://raw.githubusercontent.com/pin-language/docs/HEAD/ai-guide.md, write
-your program in Pin, and run `pin check --json` after every change."*
-
-Needs Python 3.10+ and clang (macOS: `xcode-select --install`). Tested on macOS and Linux.
+Tell your agent: *"Read https://raw.githubusercontent.com/pin-language/docs/HEAD/ai-guide.md, write the
+program in Pin, and run `pin check --json` after every change."* Error messages say how to fix each
+problem, so the agent can loop on its own.
 
 ## Status
 
