@@ -70,7 +70,7 @@ problem, so the agent can loop on its own.
 string`, `list<T>` and ordered `map<K,V>` nested freely, ownership checking, bounds-checked lists, a multi-threaded JSON HTTP server with query, form and JSON-body
 helpers, SQLite with injection-proof SQL, modules (`import` / `export`) and Git packages pinned in
 `pin.lock`. Not yet: inheritance, `null`, `finally`, closures, a full `json_decode`,
-PostgreSQL, TLS in the server (it has request/response headers, timeouts and connection limits; use a reverse
+PostgreSQL. TLS is left to a proxy by design (the server has headers, timeouts and connection limits; use a reverse
 proxy in front). Not for production.
 
 [Open an issue](https://github.com/pin-language/pin/issues) — we especially want code your agent expected to
