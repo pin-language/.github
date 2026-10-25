@@ -65,10 +65,10 @@ problem, so the agent can loop on its own.
 
 ## Status
 
-**Preview (0.4).** Functions, `int float bool string`, `list<T>` (including strings), ordered `map<K,V>`,
-ownership checking, bounds-checked lists, a multi-threaded JSON HTTP server with query, form and JSON-body
+**Preview (0.5).** Functions, classes (no inheritance) with methods and `&` parameters, `int float bool
+string`, `list<T>` and ordered `map<K,V>` nested freely, ownership checking, bounds-checked lists, a multi-threaded JSON HTTP server with query, form and JSON-body
 helpers, SQLite with injection-proof SQL, modules (`import` / `export`) and Git packages pinned in
-`pin.lock`. Not yet: classes, `null`, `try`/`catch`, closures, nested containers, a full `json_decode`,
+`pin.lock`. Not yet: inheritance, `null`, `try`/`catch`, closures, a full `json_decode`,
 request headers, PostgreSQL, TLS and timeouts in the server. Not for production; do not expose the server to
 the internet yet.
 
