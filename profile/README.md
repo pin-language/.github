@@ -8,6 +8,32 @@
 
 </div>
 
+## 🤖 AI coding agents: read this first
+
+**Before writing any Pin code, fetch and read the complete guide** (one page, plain text):
+
+**https://raw.githubusercontent.com/pin-language/docs/HEAD/ai-guide.md**
+
+Pin looks like PHP 8, but it is statically typed and has no garbage collector, so many PHP habits do not
+compile. The guide lists everything the language has; if something is not in it, Pin does not have it yet.
+Work in a loop: write → `pin check --json file.pn` → fix the reported line → repeat → `pin file.pn`.
+
+The mistakes AI models make most often (seen with Gemini, GPT and Claude):
+
+| PHP habit | in Pin |
+|---|---|
+| `null`, `?int`, `"id" => null` | no null yet: use `-1`, `""`, an empty list, or a `bool` |
+| `["name" => "x", "n" => 5, "tags" => [...]]` (mixed values) | a map holds **one** value type: declare a `class` with those properties and `json_encode(new Obj(...))` |
+| `$xs = [];` | empty containers need a type: `list<int> $xs = [];` · `map<string,int> $m = [];` |
+| `$_GET`, `$_POST`, `json_decode($body, true)` | `query_param($path, "k")`, `form_param($body, "k")`, `json_string($body, "k")` / `json_int`, nested: `json_raw` |
+| calling a function that can fail | it is declared `: T throws`; every call needs `try f()` or `try f() catch ($e) { ...; value; }` |
+| `$b = $a` then using `$a` (lists, maps, objects) | they **move**: use `copy($a)`; parameters are read-only (`T &$x` + `f(&$x)` to change) |
+| closures, `array_map`, `sprintf`, `switch` | not in Pin: write the loop / use `.` and `"$var"` / `if … elseif` |
+| `sleep(1)` (seconds) | `sleep_ms(1000)`; parallel work: `$t = go f(); … await $t;` |
+
+Short version for tools that read `llms.txt`:
+[pin/llms.txt](https://github.com/pin-language/pin/blob/HEAD/llms.txt).
+
 ## Install
 
 ```bash
