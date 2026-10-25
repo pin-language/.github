@@ -65,7 +65,8 @@ problem, so the agent can loop on its own.
 
 ## Status
 
-**Preview (0.6).** Functions, `throws`/`try`/`catch` errors, classes (no inheritance) with methods and `&` parameters, `int float bool
+**Preview (0.7).** Functions, `go`/`await` tasks with a Hub and Server-Sent Events for real-time servers,
+`throws`/`try`/`catch` errors, classes (no inheritance) with methods and `&` parameters, `int float bool
 string`, `list<T>` and ordered `map<K,V>` nested freely, ownership checking, bounds-checked lists, a multi-threaded JSON HTTP server with query, form and JSON-body
 helpers, SQLite with injection-proof SQL, modules (`import` / `export`) and Git packages pinned in
 `pin.lock`. Not yet: inheritance, `null`, `finally`, closures, a full `json_decode`,
