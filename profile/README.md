@@ -10,8 +10,10 @@
 
 ## 🤖 If you are an AI agent asked to write Pin
 
-1. **Read the whole guide first** — one page, plain text, the complete language:
-   **https://raw.githubusercontent.com/pin-language/docs/HEAD/ai-guide.md**
+1. **Read the whole guide first** — one page, the complete language:
+   **https://github.com/pin-language/docs/blob/HEAD/ai-guide.md**
+   (the same page as plain text: https://raw.githubusercontent.com/pin-language/docs/HEAD/ai-guide.md — some
+   browsing tools cannot open raw.githubusercontent.com; use whichever opens)
    If a feature is not in that guide, Pin does not have it. Do not rely on a summary of it: the details
    (types, `try`, ownership) are what make code compile.
 2. **Work in a loop:** write → `pin check --json file.pn` (one JSON error per line, each saying how to fix it)
@@ -75,25 +77,25 @@ function handle(string $method, string $path, string $body): string throws {
 serve(8080, "handle");
 ```
 
-### Where to read what (plain-text links)
+### Where to read what
 
 | to write | read |
 |---|---|
-| anything | [ai-guide.md](https://raw.githubusercontent.com/pin-language/docs/HEAD/ai-guide.md) (start here) |
-| every built-in function, with examples | [reference/README.md](https://raw.githubusercontent.com/pin-language/docs/HEAD/reference/README.md) |
-| a JSON HTTP API | [reference/http.md](https://raw.githubusercontent.com/pin-language/docs/HEAD/reference/http.md) · [reference/json.md](https://raw.githubusercontent.com/pin-language/docs/HEAD/reference/json.md) |
-| a database (SQLite) | [reference/database.md](https://raw.githubusercontent.com/pin-language/docs/HEAD/reference/database.md) |
-| classes, objects in lists | [learn/13-classes.md](https://raw.githubusercontent.com/pin-language/docs/HEAD/learn/13-classes.md) |
-| parallel work, real time (go / await, Hub, SSE) | [learn/14-tasks-and-realtime.md](https://raw.githubusercontent.com/pin-language/docs/HEAD/learn/14-tasks-and-realtime.md) |
-| an MCP server | the package [pin-language/mcp](https://raw.githubusercontent.com/pin-language/mcp/HEAD/README.md): `pin get github.com/pin-language/mcp@v0.1.0` |
-| several files, packages | [learn/12-modules-and-packages.md](https://raw.githubusercontent.com/pin-language/docs/HEAD/learn/12-modules-and-packages.md) |
+| anything | [ai-guide.md](https://github.com/pin-language/docs/blob/HEAD/ai-guide.md) (start here) |
+| every built-in function, with examples | [reference/README.md](https://github.com/pin-language/docs/blob/HEAD/reference/README.md) |
+| a JSON HTTP API | [reference/http.md](https://github.com/pin-language/docs/blob/HEAD/reference/http.md) · [reference/json.md](https://github.com/pin-language/docs/blob/HEAD/reference/json.md) |
+| a database (SQLite) | [reference/database.md](https://github.com/pin-language/docs/blob/HEAD/reference/database.md) |
+| classes, objects in lists | [learn/13-classes.md](https://github.com/pin-language/docs/blob/HEAD/learn/13-classes.md) |
+| parallel work, real time (go / await, Hub, SSE) | [learn/14-tasks-and-realtime.md](https://github.com/pin-language/docs/blob/HEAD/learn/14-tasks-and-realtime.md) |
+| an MCP server | the package [pin-language/mcp](https://github.com/pin-language/mcp): `pin get github.com/pin-language/mcp@v0.1.0` |
+| several files, packages | [learn/12-modules-and-packages.md](https://github.com/pin-language/docs/blob/HEAD/learn/12-modules-and-packages.md) |
 
 ## 👤 If you are a person
 
 **Give your agent this:**
 
 ```text
-Read https://raw.githubusercontent.com/pin-language/docs/HEAD/ai-guide.md before writing any code.
+Read https://github.com/pin-language/docs/blob/HEAD/ai-guide.md before writing any code.
 Write the program in Pin and run pin check --json after every change.
 ```
 
