@@ -65,12 +65,12 @@ problem, so the agent can loop on its own.
 
 ## Status
 
-**Preview (0.5).** Functions, classes (no inheritance) with methods and `&` parameters, `int float bool
+**Preview (0.6).** Functions, `throws`/`try`/`catch` errors, classes (no inheritance) with methods and `&` parameters, `int float bool
 string`, `list<T>` and ordered `map<K,V>` nested freely, ownership checking, bounds-checked lists, a multi-threaded JSON HTTP server with query, form and JSON-body
 helpers, SQLite with injection-proof SQL, modules (`import` / `export`) and Git packages pinned in
-`pin.lock`. Not yet: inheritance, `null`, `try`/`catch`, closures, a full `json_decode`,
-request headers, PostgreSQL, TLS and timeouts in the server. Not for production; do not expose the server to
-the internet yet.
+`pin.lock`. Not yet: inheritance, `null`, `finally`, closures, a full `json_decode`,
+PostgreSQL, TLS in the server (it has request/response headers, timeouts and connection limits; use a reverse
+proxy in front). Not for production.
 
 [Open an issue](https://github.com/pin-language/pin/issues) — we especially want code your agent expected to
 work but could not compile.
