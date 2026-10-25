@@ -4,72 +4,112 @@
 
 **A PHP-like language for AI coding agents — compiled to native code, with no garbage collector.**
 
-[Language](https://github.com/pin-language/pin) · [Learn](https://github.com/pin-language/docs/blob/HEAD/learn/README.md) · [Docs](https://github.com/pin-language/docs) · [AI guide](https://github.com/pin-language/docs/blob/HEAD/ai-guide.md) · [Benchmarks](https://github.com/pin-language/benchmarks)
+[Language](https://github.com/pin-language/pin) · [Learn](https://github.com/pin-language/docs/blob/HEAD/learn/README.md) · [Docs](https://github.com/pin-language/docs) · [AI guide](https://github.com/pin-language/docs/blob/HEAD/ai-guide.md) · [MCP package](https://github.com/pin-language/mcp) · [Benchmarks](https://github.com/pin-language/benchmarks)
 
 </div>
 
-## 🤖 AI coding agents: read this first
+## 🤖 If you are an AI agent asked to write Pin
 
-**Before writing any Pin code, fetch and read the complete guide** (one page, plain text):
-
-**https://raw.githubusercontent.com/pin-language/docs/HEAD/ai-guide.md**
-
-Pin looks like PHP 8, but it is statically typed and has no garbage collector, so many PHP habits do not
-compile. The guide lists everything the language has; if something is not in it, Pin does not have it yet.
-Work in a loop: write → `pin check --json file.pn` → fix the reported line → repeat → `pin file.pn`.
-
-The mistakes AI models make most often (seen with Gemini, GPT and Claude):
+1. **Read the whole guide first** — one page, plain text, the complete language:
+   **https://raw.githubusercontent.com/pin-language/docs/HEAD/ai-guide.md**
+   If a feature is not in that guide, Pin does not have it. Do not rely on a summary of it: the details
+   (types, `try`, ownership) are what make code compile.
+2. **Work in a loop:** write → `pin check --json file.pn` (one JSON error per line, each saying how to fix it)
+   → fix → repeat → `pin file.pn` to run, `pin build file.pn -o app` for a binary.
+3. **Pin is not PHP.** Code that is valid PHP usually does not compile. The differences that matter most:
 
 | PHP habit | in Pin |
 |---|---|
 | `null`, `?int`, `"id" => null` | no null yet: use `-1`, `""`, an empty list, or a `bool` |
 | `["name" => "x", "n" => 5, "tags" => [...]]` (mixed values) | a map holds **one** value type: declare a `class` with those properties and `json_encode(new Obj(...))` |
 | `$xs = [];` | empty containers need a type: `list<int> $xs = [];` · `map<string,int> $m = [];` |
-| `$_GET`, `$_POST`, `json_decode($body, true)` | `query_param($path, "k")`, `form_param($body, "k")`, `json_string($body, "k")` / `json_int`, nested: `json_raw` |
-| calling a function that can fail | it is declared `: T throws`; every call needs `try f()` or `try f() catch ($e) { ...; value; }` |
+| `$_GET`, `$_POST`, `json_decode($body, true)` | `query_param($path, "k")`, `form_param($body, "k")`, `json_string($body, "k")` / `json_int`; nested: `json_raw` |
+| a function that can fail | declared `: T throws`; every call needs `try f()` or `try f() catch ($e) { ...; value; }` |
 | `$b = $a` then using `$a` (lists, maps, objects) | they **move**: use `copy($a)`; parameters are read-only (`T &$x` + `f(&$x)` to change) |
 | closures, `array_map`, `sprintf`, `switch` | not in Pin: write the loop / use `.` and `"$var"` / `if … elseif` |
-| `sleep(1)` (seconds) | `sleep_ms(1000)`; parallel work: `$t = go f(); … await $t;` |
+| `sleep(1)` (seconds), `exec()`, `https://` URLs | `sleep_ms(1000)` · `run("prog", ["arg"], 5000)` (no shell) · http:// only: a proxy does TLS |
 
-MCP servers: the package [pin-language/mcp](https://github.com/pin-language/mcp).
+### A complete program in the shapes Pin wants
 
-Short version for tools that read `llms.txt`:
-[pin/llms.txt](https://github.com/pin-language/pin/blob/HEAD/llms.txt).
+This compiles and runs as it is: an HTTP API with a class for JSON, a query parameter, a JSON body and errors
+that become 400 / 404.
 
-## Install
+```php
+class Item {
+    public function __construct(public int $id, public string $name, public int $price) {}
+}
+
+class Page {
+    public list<Item> $items = [];
+    public int $total = 0;
+}
+
+function find(list<Item> $all, int $id): Item throws {
+    foreach ($all as $it) {
+        if ($it->id == $id) { return copy($it); }
+    }
+    throw error(404, "no item $id");
+}
+
+function handle(string $method, string $path, string $body): string throws {
+    list<Item> $all = [new Item(1, "tea", 40), new Item(2, "cake", 120)];
+    $route = url_path($path);
+    if ($method == "GET" && $route == "/items") {
+        $p = new Page();
+        foreach ($all as $it) { $p->total += $it->price; }
+        $p->items = $all;
+        return json_encode($p);                  // {"items":[...],"total":160}
+    }
+    if ($method == "GET" && $route == "/item") {
+        $id = intval(query_param($path, "id"));  // ?id=2  ("" -> 0)
+        return json_encode(try find($all, $id)); // missing: 404 {"error":"Not Found"}
+    }
+    if ($method == "POST" && $route == "/items") {
+        $name = json_string($body, "name");      // {"name":"pie","price":60}
+        if ($name == "") { throw error(400, "name is required"); }
+        return json_encode(new Item(3, $name, json_int($body, "price")));
+    }
+    throw error(404, "no route $route");
+}
+
+serve(8080, "handle");
+```
+
+### Where to read what (plain-text links)
+
+| to write | read |
+|---|---|
+| anything | [ai-guide.md](https://raw.githubusercontent.com/pin-language/docs/HEAD/ai-guide.md) (start here) |
+| every built-in function, with examples | [reference/README.md](https://raw.githubusercontent.com/pin-language/docs/HEAD/reference/README.md) |
+| a JSON HTTP API | [reference/http.md](https://raw.githubusercontent.com/pin-language/docs/HEAD/reference/http.md) · [reference/json.md](https://raw.githubusercontent.com/pin-language/docs/HEAD/reference/json.md) |
+| a database (SQLite) | [reference/database.md](https://raw.githubusercontent.com/pin-language/docs/HEAD/reference/database.md) |
+| classes, objects in lists | [learn/13-classes.md](https://raw.githubusercontent.com/pin-language/docs/HEAD/learn/13-classes.md) |
+| parallel work, real time (go / await, Hub, SSE) | [learn/14-tasks-and-realtime.md](https://raw.githubusercontent.com/pin-language/docs/HEAD/learn/14-tasks-and-realtime.md) |
+| an MCP server | the package [pin-language/mcp](https://raw.githubusercontent.com/pin-language/mcp/HEAD/README.md): `pin get github.com/pin-language/mcp@v0.1.0` |
+| several files, packages | [learn/12-modules-and-packages.md](https://raw.githubusercontent.com/pin-language/docs/HEAD/learn/12-modules-and-packages.md) |
+
+## 👤 If you are a person
+
+**Give your agent this:**
+
+```text
+Read https://raw.githubusercontent.com/pin-language/docs/HEAD/ai-guide.md before writing any code.
+Write the program in Pin and run pin check --json after every change.
+```
+
+**Install** (macOS or Linux, no sudo; needs Python 3.10+ and clang — the installer checks both):
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/pin-language/pin/HEAD/install.sh | sh
-```
-
-macOS or Linux, no sudo. Needs Python 3.10+ and clang (macOS: `xcode-select --install`; Ubuntu:
-`sudo apt install clang`) — the installer checks both and tells you what is missing. Then:
-
-```bash
 printf '%s\n' 'echo "Hello from Pin\n";' > hello.pn && pin hello.pn
 ```
 
 Most code is now written by AI agents, and they already know PHP. Pin keeps that syntax but moves the
-mistakes from production to compile time: every variable has one type, memory is managed by compile-time
-ownership (like Rust, simplified), every path through a function is checked, and every error says how to fix
-it — as text, or as JSON for the agent's loop. Programs compile through LLVM into one native binary,
-including a multi-threaded HTTP server.
-
-```php
-function squares(int $n): list<int> {   // the caller owns the returned list
-    list<int> $out = [];
-    for ($i = 1; $i <= $n; $i++) { $out[] = $i * $i; }
-    return $out;
-}
-
-function handle(string $method, string $path, string $body): string {
-    if ($path == "/squares") { return json_encode(squares(10)); }
-    http_status(404);
-    return json_encode(["error" => "not found"]);
-}
-
-serve(8080, "handle");   // one binary, one thread per core, no locks needed
-```
+mistakes from production to compile time. Every variable has one type, and compile-time ownership (like
+Rust, simplified) manages memory. Every path through a function is checked, and every error says how to fix
+it. Programs compile through LLVM into one native binary, including a multi-threaded HTTP server. People
+learning by hand: [Learn Pin](https://github.com/pin-language/docs/blob/HEAD/learn/README.md), 14 short
+chapters.
 
 ## Speed
 
@@ -82,26 +122,27 @@ Same algorithm in every language, same output checked. Apple M2, best of 3 runs 
 | pi — 100M terms | **0.090** | 0.090 | 0.091 | 0.930 | 2.235 | 13.239 |
 | list build + sum | **0.114** | 0.131 | 0.183 | 0.440 | 1.192 | 4.754 |
 
-Rust- and Go-level speed, about 4–15× faster than PHP with JIT. Small CPU loops, not applications; on macOS
-differences under ~20% are noise. Method, memory and HTTP numbers: [benchmarks](https://github.com/pin-language/benchmarks).
-
-## Try it with your agent
-
-Tell your agent: *"Read https://raw.githubusercontent.com/pin-language/docs/HEAD/ai-guide.md, write the
-program in Pin, and run `pin check --json` after every change."* Error messages say how to fix each
-problem, so the agent can loop on its own.
+Rust- and Go-level speed, about 4–15× faster than PHP with JIT. These are small CPU loops, not applications,
+and on macOS differences under ~20% are noise. Method, memory and HTTP numbers:
+[benchmarks](https://github.com/pin-language/benchmarks).
 
 ## Status
 
-**Preview (0.8).** Functions, `go`/`await` tasks with a Hub and Server-Sent Events for real-time servers,
-`throws`/`try`/`catch` errors, classes (no inheritance) with methods and `&` parameters, `int float bool
-string`, `list<T>` and ordered `map<K,V>` nested freely, ownership checking, bounds-checked lists, a multi-threaded JSON HTTP server with query, form and JSON-body
-helpers, SQLite with injection-proof SQL, modules (`import` / `export`) and Git packages pinned in
-`pin.lock`. Not yet: inheritance, `null`, `finally`, closures,
-PostgreSQL. TLS is left to a proxy by design (the server has headers, timeouts and connection limits; use a reverse
-proxy in front). Not for production.
+**Preview (0.8).**
 
-[Open an issue](https://github.com/pin-language/pin/issues) — we especially want code your agent expected to
-work but could not compile.
+- **Language:** functions; classes (no inheritance) with methods and `&` parameters; `int float bool string`;
+  `list<T>` and ordered `map<K,V>`, nested freely; `throws` / `try` / `catch`; ownership checking;
+  bounds-checked lists.
+- **Concurrency:** `go` / `await` tasks.
+- **HTTP:** a multi-threaded HTTP server with headers, timeouts, a Hub and Server-Sent Events; an http://
+  client; `run()`.
+- **Data:** SQLite with injection-proof SQL; nested JSON reading; stdin.
+- **Code organisation:** modules and Git packages pinned in `pin.lock`.
+
+Not yet: inheritance, `null`, `finally`, closures, PostgreSQL. TLS is left to a proxy by design. Not for
+production.
+
+[Open an issue](https://github.com/pin-language/pin/issues). We especially want code your agent expected to
+work but that could not compile.
 
 <sub>Made by PinaTo Co., Ltd. · MIT licensed</sub>
