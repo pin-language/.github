@@ -22,13 +22,13 @@
 
 | PHP habit | in Pin |
 |---|---|
-| `null`, `?int`, `"id" => null` | no null yet: use `-1`, `""`, an empty list, or a `bool` |
+| `null` anywhere | null only in `?T` types (`?User`, `?int`, `?string`, `list<?int>`): check `$u !== null` (or `?->`, `??`) before use |
 | `["name" => "x", "n" => 5, "tags" => [...]]` (mixed values) | a map holds **one** value type: declare a `class` with those properties and `json_encode(new Obj(...))` |
 | `$xs = [];` | empty containers need a type: `list<int> $xs = [];` · `map<string,int> $m = [];` |
-| `$_GET`, `$_POST`, `json_decode($body, true)` | `query_param($path, "k")`, `form_param($body, "k")`, `json_string($body, "k")` / `json_int`; nested: `json_raw` |
+| `$_GET`, `$_POST`, `json_decode($body, true)` | `query_param($path, "k")`, `form_param($body, "k")`, `json_string($body, "k")` / `json_int`; nested: `json_raw`; a whole body into a class: `OrderIn $in = try json_decode($body);` |
 | a function that can fail | declared `: T throws`; every call needs `try f()` or `try f() catch ($e) { ...; value; }` |
 | `$b = $a` then using `$a` (lists, maps, objects) | they **move**: use `copy($a)`; parameters are read-only (`T &$x` + `f(&$x)` to change) |
-| closures, `array_map`, `sprintf`, `switch` | not in Pin: write the loop / use `.` and `"$var"` / `if … elseif` |
+| `switch`, `match` | not in Pin: `if … elseif`. Closures, `array_map`, `sprintf` exist; a closure kept or returned owns what it uses (lists move into it: `copy()`) |
 | `sleep(1)` (seconds), `exec()`, `https://` URLs | `sleep_ms(1000)` · `run("prog", ["arg"], 5000)` (no shell) · http:// only: a proxy does TLS |
 
 ### A complete program in the shapes Pin wants
@@ -84,7 +84,7 @@ serve(8080, "handle");
 | anything | [ai-guide.md](https://github.com/pin-language/docs/blob/HEAD/ai-guide.md) (start here) |
 | every built-in function, with examples | [reference/README.md](https://github.com/pin-language/docs/blob/HEAD/reference/README.md) |
 | a JSON HTTP API | [reference/http.md](https://github.com/pin-language/docs/blob/HEAD/reference/http.md) · [reference/json.md](https://github.com/pin-language/docs/blob/HEAD/reference/json.md) |
-| a database (SQLite) | [reference/database.md](https://github.com/pin-language/docs/blob/HEAD/reference/database.md) |
+| a database (SQLite, PostgreSQL) | [reference/database.md](https://github.com/pin-language/docs/blob/HEAD/reference/database.md) |
 | classes, objects in lists | [learn/13-classes.md](https://github.com/pin-language/docs/blob/HEAD/learn/13-classes.md) |
 | parallel work, real time (go / await, Hub, SSE) | [learn/14-tasks-and-realtime.md](https://github.com/pin-language/docs/blob/HEAD/learn/14-tasks-and-realtime.md) |
 | an MCP server | the package [pin-language/mcp](https://github.com/pin-language/mcp): `pin get github.com/pin-language/mcp@v0.1.0` |
@@ -130,18 +130,19 @@ and on macOS differences under ~20% are noise. Method, memory and HTTP numbers:
 
 ## Status
 
-**Preview (0.8).**
+**Preview (0.9).**
 
 - **Language:** functions; classes (no inheritance) with methods and `&` parameters; `int float bool string`;
-  `list<T>` and ordered `map<K,V>`, nested freely; `throws` / `try` / `catch`; ownership checking;
-  bounds-checked lists.
+  `list<T>` and ordered `map<K,V>`, nested freely; `null` as `?T`, checked before use; `throws` / `try` /
+  `catch`; closures (`fn($x) => ...`, `function () use ($a, &$b) { }`, `fn(T): R` types); ownership checking;
+  bounds-checked lists; strings are always UTF-8 (`mb_*`, `grapheme_*`).
 - **Concurrency:** `go` / `await` tasks.
 - **HTTP:** a multi-threaded HTTP server with headers, timeouts, a Hub and Server-Sent Events; an http://
   client; `run()`.
-- **Data:** SQLite with injection-proof SQL; nested JSON reading; stdin.
+- **Data:** SQLite and PostgreSQL with injection-proof SQL; `json_decode` into a class; nested JSON reading; stdin.
 - **Code organisation:** modules and Git packages pinned in `pin.lock`.
 
-Not yet: inheritance, `null`, `finally`, closures, PostgreSQL. TLS is left to a proxy by design. Not for
+Not yet: inheritance / interfaces, `finally`, `switch` / `match`. TLS is left to a proxy by design. Not for
 production.
 
 [Open an issue](https://github.com/pin-language/pin/issues). We especially want code your agent expected to
